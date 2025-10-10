@@ -2,7 +2,7 @@ pipeline {
     agent { label 'kube-node' }
 
     environment {
-        DOCKERHUB_USER = 'abhinshyam'          // your DockerHub username
+        DOCKERHUB_USER = 'sanchit0305'          // your DockerHub username
         IMAGE_NAME = 'kanbanboard'
         VERSION = "0.01-${BUILD_NUMBER}"
     }
@@ -25,7 +25,7 @@ pipeline {
 
         stage('Login to DockerHub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                withCredentials([usernamePassword(credentialsId: 'docker-pat', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
                     sh '''
                         echo "$PASS" | docker login -u "$USER" --password-stdin
                     '''
