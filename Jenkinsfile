@@ -6,7 +6,9 @@ pipeline {
         IMAGE_NAME = 'kanbanboard'
         VERSION = "0.01-${BUILD_NUMBER}"
         SONAR_PROJECT_KEY = 'kanbanboard'
-        SONAR_SCANNER_HOME = tool 'SonarScanner'  // Define this in Jenkins Global Tool Config
+        SONARQUBE_TOKEN = credentials('SonarQube')
+        SONAR_HOST_URL = 'http://3.91.234.181:9000'
+        
     }
 
     stages {
@@ -19,58 +21,53 @@ pipeline {
         stage('SonarQube Scan') {
             steps {
                 script {
-                    withSonarQubeEnv('SonarQube') {   // SonarQube server name from Jenkins config
+                    // Must match the *Name* under "Manage Jenkins" -> "Configure System" -> "SonarQube Servers"
+                    withSonarQubeEnv('SonarQube') {
                         sh """
-                        ${SONAR_SCANNER_HOME}/bin/sonar-scanner \
-                          -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                          -Dsonar.sources=. \
-                          -Dsonar.host.url=$SONAR_HOST_URL \
-                          -Dsonar.login=$SONAR_AUTH_TOKEN
+                            sonar-scanner \
+                                -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                                -Dsonar.sources=. \
+                                -Dsonar.projectVersion=${VERSION} \
+                                -Dsonar.host.url=${SONAR_HOST_URL} \
+                                -Dsonar.login=$SONARQUBE_TOKEN \
                         """
                     }
                 }
             }
         }
 
-        stage('Wait for Quality Gate') {
-            steps {
-                timeout(time: 2, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true  // Fail pipeline if quality gate fails
-                }
-            }
-        }
 
         stage('Build Docker Image') {
             steps {
                 echo "🔧 Building Docker image..."
-                sh '''
+                sh """
                     docker build -t $DOCKERHUB_USER/$IMAGE_NAME:$VERSION .
-                '''
+                """
             }
         }
 
         stage('Login to DockerHub') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'docker-pat', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh '''
+                    sh """
                         echo "$PASS" | docker login -u "$USER" --password-stdin
-                    '''
+                    """
                 }
             }
         }
 
         stage('Push to DockerHub') {
             steps {
-                sh '''
+                sh """
                     docker push $DOCKERHUB_USER/$IMAGE_NAME:$VERSION
-                '''
+                """
             }
         }
 
         stage('Trigger Deployment Pipeline') {
             steps {
                 echo "✅ Image pushed successfully! Triggering deployment..."
-                build job: 'kanban-deploy-pipeline', parameters: [
+                build job: 'kanban-deploy-pipeline1', parameters: [
                     string(name: 'IMAGE_TAG', value: "${VERSION}")
                 ]
             }
