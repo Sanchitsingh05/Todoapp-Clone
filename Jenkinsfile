@@ -6,8 +6,8 @@ pipeline {
         IMAGE_NAME = 'kanbanboard'
         VERSION = "0.01-${BUILD_NUMBER}"
         SONAR_PROJECT_KEY = 'kanbanboard'
-        SONARQUBE_TOKEN = credentials('SonarQube')
-        SONAR_HOST_URL = 'http://3.91.234.181:9000'
+        SONARQUBE_TOKEN = credentials('Sonarqube')
+        SONAR_HOST_URL = 'http://98.80.119.15:9000/'
         
     }
 
@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     // Must match the *Name* under "Manage Jenkins" -> "Configure System" -> "SonarQube Servers"
-                    withSonarQubeEnv('SonarQube') {
+                    withSonarQubeEnv('Sonarqube') {
                         sh """
                             sonar-scanner \
                                 -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
