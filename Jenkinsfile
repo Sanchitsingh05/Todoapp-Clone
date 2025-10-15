@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'kube-node' }  // Ensure this agent has Docker + Node + sonar-scanner installed
+    agent { label 'built-in' }  // Ensure this agent has Docker + Node + sonar-scanner installed
 
     environment {
         DOCKERHUB_USER = 'sanchit0305'
