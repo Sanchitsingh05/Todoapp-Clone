@@ -8,14 +8,8 @@ pipeline {
         SONAR_PROJECT_KEY = 'kanbanboard'
         SONARQUBE_TOKEN = credentials('SonarQube')
         SONAR_HOST_URL = 'http://3.94.159.61:9000'
-        
-// ==== ADDED: AWS credentials & region (available to all stages) ====
-        AWS_ACCESS_KEY_ID     = credentials('AKIA3FLDYXH3XCXCH7QE')       // Secret Text in Jenkins
-        AWS_SECRET_ACCESS_KEY = credentials('7GKeGBD33EAYnWCsj9tWUHN9ESNDQjBWFdZRgPBH')   // Secret Text in Jenkins
-        AWS_DEFAULT_REGION     = 'ap-south-1'                           // set your AWS region
-        AWS_REGION             = 'ap-south-1'                           // some tools read this name
-        // ================================================================
     }
+    
 
     stages {
         stage('Checkout') {
