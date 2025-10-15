@@ -7,7 +7,7 @@ pipeline {
         VERSION = "0.01-${BUILD_NUMBER}"
         SONAR_PROJECT_KEY = 'kanbanboard'
         SONARQUBE_TOKEN = credentials('SonarQube')
-        SONAR_HOST_URL = 'http://34.202.163.245:9000'
+        SONAR_HOST_URL = 'http://3.94.159.61:9000'
         
     }
 
