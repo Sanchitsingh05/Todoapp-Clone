@@ -5,9 +5,9 @@ pipeline {
         DOCKERHUB_USER = 'sanchit0305'
         IMAGE_NAME = 'todoapp'
         VERSION = "openshift"
-       // SONAR_PROJECT_KEY = 'kanbanboard'
-       // SONARQUBE_TOKEN = credentials('SonarQube')
-       // SONAR_HOST_URL = 'http://3.81.151.108:9000/'
+        SONAR_PROJECT_KEY = 'kanbanboard'
+        SONARQUBE_TOKEN = credentials('SonarQube')
+        SONAR_HOST_URL = 'http://172.26.125.140:9000/'
         
     }
 
@@ -17,6 +17,24 @@ pipeline {
                 checkout scm
             }
         }
+           stage('SonarQube Scan') {
+            steps {
+                script {
+                    // Must match the *Name* under "Manage Jenkins" -> "Configure System" -> "SonarQube Servers"
+                    withSonarQubeEnv('SonarQube-Server') {
+                        sh """
+                            sonar-scanner \
+                                -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
+                                -Dsonar.sources=. \
+                                -Dsonar.projectVersion=${VERSION} \
+                                -Dsonar.host.url=${SONAR_HOST_URL} \
+                                -Dsonar.login=$SONARQUBE_TOKEN \
+                        """
+                    }
+                }
+            }
+        }
+
 
         stage('Build Docker Image') {
             steps {
