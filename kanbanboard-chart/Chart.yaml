@@ -1,6 +1,8 @@
 apiVersion: v2
 name: kanbanboard
-description: A Helm chart for the Kanbanboard frontend app
+description: Kanban Board (ClusterIP + Route)
 type: application
 version: 0.1.0
-appVersion: "0.1.0"
+
+# Keep quoted so it always renders as a string
+appVersion: "0.01"
