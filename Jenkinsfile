@@ -1,15 +1,15 @@
 pipeline {
-    agent { label 'built-in' }  // Ensure this agent has Docker + Node + sonar-scanner installed
+    agent { label 'deploy-node' }  // Ensure this agent has Docker + Node + sonar-scanner installed
 
     environment {
         DOCKERHUB_USER = 'sanchit0305'
-        IMAGE_NAME = 'kanbanboard'
-        VERSION = "0.01-${BUILD_NUMBER}"
+        IMAGE_NAME = 'todoapp'
+        VERSION = "openshift"
        // SONAR_PROJECT_KEY = 'kanbanboard'
-        //SONARQUBE_TOKEN = credentials('SonarQube')
-        //SONAR_HOST_URL = 'http://3.94.159.61:9000'
+       // SONARQUBE_TOKEN = credentials('SonarQube')
+       // SONAR_HOST_URL = 'http://3.81.151.108:9000/'
+        
     }
-    
 
     stages {
         stage('Checkout') {
@@ -17,7 +17,6 @@ pipeline {
                 checkout scm
             }
         }
-
 
         stage('Build Docker Image') {
             steps {
@@ -49,7 +48,7 @@ pipeline {
         stage('Trigger Deployment Pipeline') {
             steps {
                 echo "✅ Image pushed successfully! Triggering deployment..."
-                build job: 'kanban-deploy-pipeline', parameters: [
+                build job: 'kanban-deploy-openshift-cd', parameters: [
                     string(name: 'IMAGE_TAG', value: "${VERSION}")
                 ]
             }
